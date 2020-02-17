@@ -2,8 +2,15 @@
 
 namespace Butschster\GitHooks\Console\Commands;
 
-class CommitMessage extends PrepareCommitMessage
+use Butschster\GitHooks\Console\Commands\concerns\WithCommitMessage;
+use Butschster\GitHooks\Contracts\CommitMessageStorage;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Console\Command;
+
+class CommitMessage extends Command
 {
+    use WithCommitMessage;
+
     /**
      * The name and signature of the console command.
      * @var string
@@ -19,4 +26,16 @@ class CommitMessage extends PrepareCommitMessage
      * @var string
      */
     protected $hook = 'commit-msg';
+
+    /**
+     * @param Repository $config
+     * @param CommitMessageStorage $messageStorage
+     */
+    public function __construct(Repository $config, CommitMessageStorage $messageStorage)
+    {
+        parent::__construct();
+
+        $this->config = $config;
+        $this->messageStorage = $messageStorage;
+    }
 }

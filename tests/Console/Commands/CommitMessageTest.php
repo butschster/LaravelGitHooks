@@ -4,6 +4,7 @@ namespace Butschster\GitHooks\Tests\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\CommitMessage;
 use Butschster\GitHooks\Contracts\MessageHook;
+use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
 use Mockery as m;
@@ -70,7 +71,12 @@ class CommitMessageTest extends TestCase
                 CommitMessageTestHook2::class
             ]);
 
-        $command->handle();
+        $gitCommand = m::mock(GetListOfChangedFiles::class);
+        $gitCommand->shouldReceive('exec')->once()->andReturn([
+            'AM src/ChangedFiles.php'
+        ]);
+
+        $command->handle($gitCommand);
 
         $this->assertTrue(true);
     }
@@ -82,9 +88,9 @@ class CommitMessageTestHook1 implements MessageHook
     /**
      * @inheritDoc
      */
-    public function handle(string $message, Closure $next)
+    public function handle(\Butschster\GitHooks\Git\CommitMessage $message, Closure $next)
     {
-        $message .= ' hook1';
+        $message->setMessage($message->getMessage().' hook1');
 
         return $next($message);
     }
@@ -96,9 +102,9 @@ class CommitMessageTestHook2 implements MessageHook
     /**
      * @inheritDoc
      */
-    public function handle(string $message, Closure $next)
+    public function handle(\Butschster\GitHooks\Git\CommitMessage $message, Closure $next)
     {
-        $message .= ' hook2';
+        $message->setMessage($message->getMessage().' hook2');
 
         return $next($message);
     }
