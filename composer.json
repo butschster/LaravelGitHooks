@@ -1,13 +1,12 @@
 {
   "name": "butschster/laravel-git-hooks",
-  "description": "The most powerful and extendable tools for managing SEO Meta Tags in your Laravel project",
+  "description": "Tools for managing git hooks for Laravel application",
   "keywords": [
+    "laravel6",
     "laravel5",
     "lumen",
-    "seo",
-    "webmaster",
-    "metatags",
-    "opengraph"
+    "git",
+    "git-hooks"
   ],
   "license": "MIT",
   "authors": [
