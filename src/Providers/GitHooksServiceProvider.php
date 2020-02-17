@@ -63,6 +63,6 @@ class GitHooksServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../../config/git_hooks.php' => $this->app->configPath('git_hooks.php'),
-        ], 'git-hooks-config');
+        ], 'config');
     }
 }
