@@ -28,7 +28,6 @@ Publish the config file.
     
 Add yous hooks into config file
 
-    ```php
     // config/git_hooks.php
     
     return [
@@ -38,7 +37,6 @@ Add yous hooks into config file
         ],
         ...
     ];
-    ```
 
 That's it!
 
