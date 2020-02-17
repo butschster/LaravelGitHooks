@@ -3,7 +3,7 @@
 Laravel Git Hooks manager is a beautiful tools for Laravel applications. 
 It provides a simple and flexible API to manage git hooks, edit commit messages
 
-[![Build Status](https://travis-ci.org/butschster/LaravelGitHooks.svg?branch=master)](https://travis-ci.org/butschster/LaravelGitHooks) [![Latest Stable Version](https://packagist.org/packages/butschster/laravel-git-hooks/v/stable)](https://packagist.org/packages/butschster/laravel-git-hooks) [![Total Downloads](https://packagist.org/packages/butschster/laravel-git-hooks/downloads)](https://packagist.org/packages/butschster/laravel-git-hooks) [![License](https://poser.pugx.org/butschster/laravel-git-hooks/license)](https://packagist.org/packages/butschster/meta-tags)
+[![Build Status](https://travis-ci.org/butschster/LaravelGitHooks.svg?branch=master)](https://travis-ci.org/butschster/LaravelGitHooks) [![Latest Stable Version](https://poser.pugx.org/butschster/laravel-git-hooks/v/stable)](https://packagist.org/packages/butschster/laravel-git-hooks) [![Total Downloads](https://poser.pugx.org/butschster/laravel-git-hooks/downloads)](https://packagist.org/packages/butschster/laravel-git-hooks) [![License](https://poser.pugx.org/butschster/laravel-git-hooks/license)](https://packagist.org/packages/butschster/meta-tags)
 
 
 ## Features
