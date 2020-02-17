@@ -22,7 +22,7 @@ class GitHooksServiceProviderTest extends TestCase
         $provider->boot();
 
         $this->assertEquals([
-            'git-hooks-config' => [
+            'config' => [
                 '/home/pbuchnev/webserver/LaravelGitHooks/src/Providers/../../config/git_hooks.php' => 'config/git_hooks.php'
             ]
         ], GitHooksServiceProvider::$publishGroups);
