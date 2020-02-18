@@ -31,11 +31,11 @@ class GitHooksServiceProvider extends ServiceProvider
                     'prepare-commit-msg',
                     'commit-msg',
                     'post-commit',
-                    'pre-rebase',
-                    'post-rewrite',
-                    'post-checkout',
-                    'post-merge',
-                    'pre-push'
+                    //'pre-rebase',
+                    //'post-rewrite',
+                    //'post-checkout',
+                    //'post-merge',
+                    //'pre-push'
                 ];
 
                 $storage = $app[Contracts\HookStorage::class];

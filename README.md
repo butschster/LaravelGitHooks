@@ -153,3 +153,44 @@ class MyFirstCommitMessageHook implements \Butschster\GitHooks\Contracts\Message
     }
 }
 ```
+
+### post-commit
+
+After the entire commit process is completed, the post-commit hook runs. It doesn’t take any parameters, but you can easily get the last commit by running git log -1 HEAD. Generally, this script is used for notification or something similar.
+
+
+```php
+// config/git_hooks.php
+return [
+    ...
+    'post-commit' => [
+        \App\Console\GitHooks\NotifyAboutNewCommit::class,
+    ],
+    ...
+];
+
+// App/Console/GitHooks/NotifyAboutNewCommit.php
+
+namespace \App\Console\GitHooks;
+
+use Butschster\GitHooks\Git\Log;
+use Closure;
+
+class NotifyAboutNewCommit implements \Butschster\GitHooks\Contracts\PostCommitHook {
+
+    public function handle(Log $log, Closure $next)
+    {
+        $hash = $log->getHash();
+        $author = $log->getAuthor();
+        $date = $log->getDate();
+        $message = $log->getMessage();
+
+        // do something
+
+        // If you want to cancel, you have to throw an exception.
+
+        // run next hook
+        return $next($log);
+    }
+}
+```
