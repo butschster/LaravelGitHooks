@@ -3,10 +3,10 @@
 namespace Butschster\GitHooks;
 
 use Butschster\GitHooks\Contracts\Hook;
+use Butschster\GitHooks\Exceptions\HookFailException;
 use Closure;
 use Exception;
 use Illuminate\Pipeline\Pipeline;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Throwable;
 
 class HooksPipeline extends Pipeline
@@ -90,7 +90,7 @@ class HooksPipeline extends Pipeline
                     $this->handleException($passable, $e);
                 } catch (Throwable $e) {
                     $this->handleExceptionCallback($pipe, $e);
-                    $this->handleException($passable, new FatalThrowableError($e));
+                    $this->handleException($passable, $e);
                 }
             };
         };
@@ -100,7 +100,7 @@ class HooksPipeline extends Pipeline
      * @param Hook $hook
      * @param Exception $e
      */
-    public function handleExceptionCallback(Hook $hook, $e)
+    public function handleExceptionCallback(Hook $hook, Exception $e)
     {
         if ($this->errorCallback) {
             call_user_func_array($this->errorCallback, [$hook, $e]);
@@ -112,6 +112,6 @@ class HooksPipeline extends Pipeline
      */
     protected function handleException($passable, Exception $e)
     {
-        parent::handleException($passable, $e);
+        throw new HookFailException($e->getMessage(), 0, $e);
     }
 }

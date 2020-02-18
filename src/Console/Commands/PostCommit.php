@@ -3,6 +3,7 @@
 namespace Butschster\GitHooks\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\concerns\WithPipeline;
+use Butschster\GitHooks\Exceptions\HookFailException;
 use Butschster\GitHooks\Git\GetLasCommitFromLog;
 use Butschster\GitHooks\Git\Log;
 use Illuminate\Console\Command;
@@ -47,11 +48,15 @@ class PostCommit extends Command
      */
     public function handle(GetLasCommitFromLog $command)
     {
-        $this->sendLogCommitThroughHooks(
-            new Log(
-                $command->exec()->getOutput()
-            )
-        );
+        try {
+            $this->sendLogCommitThroughHooks(
+                new Log(
+                    $command->exec()->getOutput()
+                )
+            );
+        } catch (HookFailException $e) {
+            return 1;
+        }
     }
 
     /**

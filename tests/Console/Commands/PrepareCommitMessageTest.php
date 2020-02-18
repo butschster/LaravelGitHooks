@@ -4,6 +4,7 @@ namespace Butschster\GitHooks\Tests\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\PrepareCommitMessage;
 use Butschster\GitHooks\Contracts\MessageHook;
+use Butschster\GitHooks\Exceptions\HookFailException;
 use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
@@ -95,15 +96,11 @@ class PrepareCommitMessageTest extends TestCase
         $gitCommand = m::mock(GetListOfChangedFiles::class);
         $gitCommand->shouldReceive('exec')->once()->andReturn($process);
 
-        $command->handle($gitCommand);
-
-        $this->assertTrue(true);
+        $this->assertEquals(0, $command->handle($gitCommand));
     }
 
     function test_failed_hook()
     {
-        $this->expectException(Exception::class);
-
         $app = $this->makeApplication();
         $app->shouldReceive('basePath')->andReturnUsing(function ($path = null) {
             return $path;
@@ -144,6 +141,14 @@ class PrepareCommitMessageTest extends TestCase
         $output->shouldNotReceive('writeln')
             ->with('<info>Hook: hook 2...</info>', 32);
 
+        $output->shouldReceive('writeln')
+            ->once()
+            ->with('<error>Failed hook: hook 3</error>', 32);
+
+        $output->shouldReceive('writeln')
+            ->once()
+            ->with('<error>Reason: Failed hook</error>', 32);
+
         $command->setOutput($output);
 
         $config->shouldReceive('get')
@@ -160,9 +165,7 @@ class PrepareCommitMessageTest extends TestCase
         $gitCommand = m::mock(GetListOfChangedFiles::class);
         $gitCommand->shouldReceive('exec')->once()->andReturn($process);
 
-        $command->handle($gitCommand);
-
-        $this->assertTrue(true);
+        $this->assertEquals(1, $command->handle($gitCommand));
     }
 }
 

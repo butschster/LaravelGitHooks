@@ -3,6 +3,7 @@
 namespace Butschster\GitHooks\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\concerns\WithPipeline;
+use Butschster\GitHooks\Exceptions\HookFailException;
 use Butschster\GitHooks\Git\ChangedFiles;
 use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Illuminate\Console\Command;
@@ -47,11 +48,15 @@ class PreCommit extends Command
      */
     public function handle(GetListOfChangedFiles $command)
     {
-        $this->sendChangedFilesThroughHooks(
-            new ChangedFiles(
-                $command->exec()->getOutput()
-            )
-        );
+        try {
+            $this->sendChangedFilesThroughHooks(
+                new ChangedFiles(
+                    $command->exec()->getOutput()
+                )
+            );
+        } catch (HookFailException $e) {
+            return 1;
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Butschster\GitHooks\Console\Commands\concerns;
 
 use Butschster\GitHooks\Contracts\Hook;
 use Butschster\GitHooks\HooksPipeline;
+use Exception;
 use Illuminate\Pipeline\Pipeline;
 
 trait WithPipeline
@@ -30,7 +31,7 @@ trait WithPipeline
 
     protected function showInfoAboutHookException()
     {
-        return function (Hook $hook, $e) {
+        return function (Hook $hook, Exception $e) {
             $this->error(sprintf('Failed hook: %s', $hook->getName()));
             $this->error(sprintf('Reason: %s', $e->getMessage()));
         };

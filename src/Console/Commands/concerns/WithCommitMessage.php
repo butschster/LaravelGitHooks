@@ -2,6 +2,7 @@
 
 namespace Butschster\GitHooks\Console\Commands\concerns;
 
+use Butschster\GitHooks\Exceptions\HookFailException;
 use Butschster\GitHooks\Git\ChangedFiles;
 use Butschster\GitHooks\Git\CommitMessage;
 use Butschster\GitHooks\Contracts\CommitMessageStorage;
@@ -37,14 +38,18 @@ trait WithCommitMessage
             $this->getLaravel()->basePath($file)
         );
 
-        $this->sendMessageThroughHooks(
-            new CommitMessage(
-                $message,
-                new ChangedFiles(
-                    $command->exec()->getOutput()
+        try {
+            $this->sendMessageThroughHooks(
+                new CommitMessage(
+                    $message,
+                    new ChangedFiles(
+                        $command->exec()->getOutput()
+                    )
                 )
-            )
-        );
+            );
+        } catch (HookFailException $e) {
+            return 1;
+        }
     }
 
     /**

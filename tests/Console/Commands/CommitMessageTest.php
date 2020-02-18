@@ -4,6 +4,7 @@ namespace Butschster\GitHooks\Tests\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\CommitMessage;
 use Butschster\GitHooks\Contracts\MessageHook;
+use Butschster\GitHooks\Exceptions\HookFailException;
 use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
@@ -93,14 +94,13 @@ class CommitMessageTest extends TestCase
         $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');
         $gitCommand->shouldReceive('exec')->once()->andReturn($process);
 
-        $command->handle($gitCommand);
+        $this->assertEquals(0, $command->handle($gitCommand));
 
         $this->assertTrue(true);
     }
 
     function test_failed_hook()
     {
-        $this->expectException(Exception::class);
         $app = $this->makeApplication();
         $app->shouldReceive('basePath')->andReturnUsing(function ($path = null) {
             return $path;
@@ -163,7 +163,7 @@ class CommitMessageTest extends TestCase
         $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');
         $gitCommand->shouldReceive('exec')->once()->andReturn($process);
 
-        $command->handle($gitCommand);
+        $this->assertEquals(1, $command->handle($gitCommand));
     }
 }
 
