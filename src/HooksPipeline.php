@@ -90,7 +90,7 @@ class HooksPipeline extends Pipeline
                         // If the pipe is a string we will parse the string and resolve the class out
                         // of the dependency injection container. We can then build a callable and
                         // execute the pipe function giving in the parameters that are required.
-                        $pipe = $this->getContainer()->make($pipe, [$config]);
+                        $pipe = $this->getContainer()->make($pipe, ['config' => $config]);
 
                         if ($this->callback) {
                             call_user_func_array($this->callback, [$pipe]);
@@ -124,7 +124,7 @@ class HooksPipeline extends Pipeline
      * @param Hook $hook
      * @param Exception $e
      */
-    public function handleExceptionCallback(Hook $hook, Exception $e)
+    protected function handleExceptionCallback(Hook $hook, $e)
     {
         if ($this->errorCallback) {
             call_user_func_array($this->errorCallback, [$hook, $e]);
@@ -134,7 +134,7 @@ class HooksPipeline extends Pipeline
     /**
      * @inheritDoc
      */
-    protected function handleException($passable, Exception $e)
+    protected function handleException($passable, $e)
     {
         throw new HookFailException($e->getMessage(), 0, $e);
     }

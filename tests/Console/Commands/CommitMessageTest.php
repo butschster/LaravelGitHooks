@@ -103,7 +103,7 @@ class CommitMessageTest extends TestCase
     {
         $app = $this->makeApplication();
         $app->shouldReceive('make')->andReturnUsing(function ($class, array $parameters = []) {
-            return new $class(...$parameters);
+            return new $class(...array_values($parameters));
         });
 
         $app->shouldReceive('basePath')->andReturnUsing(function ($path = null) {
