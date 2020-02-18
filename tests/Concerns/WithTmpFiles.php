@@ -68,6 +68,6 @@ trait WithTmpFiles
      */
     protected function getTmpFilePath(string $filename): string
     {
-        return $this->tempDir.$filename;
+        return $this->tempDir.'/'.$filename;
     }
 }
