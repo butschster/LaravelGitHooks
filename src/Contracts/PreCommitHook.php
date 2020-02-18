@@ -5,7 +5,7 @@ namespace Butschster\GitHooks\Contracts;
 use Butschster\GitHooks\Git\ChangedFiles;
 use Closure;
 
-interface PreCommitHook
+interface PreCommitHook extends Hook
 {
     /**
      * @param ChangedFiles $files

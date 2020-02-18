@@ -7,6 +7,8 @@ use Butschster\GitHooks\Contracts\MessageHook;
 use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
+use Exception;
+use Illuminate\Console\OutputStyle;
 use Mockery as m;
 use Symfony\Component\Process\Process;
 
@@ -67,6 +69,18 @@ class PrepareCommitMessageTest extends TestCase
         $command->setLaravel($app);
         $command->setInput($input);
 
+        $output = m::mock(OutputStyle::class);
+
+        $output->shouldReceive('writeln')
+            ->once()
+            ->with('<info>Hook: hook 1...</info>', 32);
+
+        $output->shouldReceive('writeln')
+            ->once()
+            ->with('<info>Hook: hook 2...</info>', 32);
+
+        $command->setOutput($output);
+
         $config->shouldReceive('get')
             ->with('git_hooks.prepare-commit-msg')
             ->once()
@@ -74,6 +88,71 @@ class PrepareCommitMessageTest extends TestCase
                 PrepareCommitMessageTestHook1::class,
                 PrepareCommitMessageTestHook2::class
         ]);
+
+        $process = m::mock(Process::class);
+        $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');
+
+        $gitCommand = m::mock(GetListOfChangedFiles::class);
+        $gitCommand->shouldReceive('exec')->once()->andReturn($process);
+
+        $command->handle($gitCommand);
+
+        $this->assertTrue(true);
+    }
+
+    function test_failed_hook()
+    {
+        $this->expectException(Exception::class);
+
+        $app = $this->makeApplication();
+        $app->shouldReceive('basePath')->andReturnUsing(function ($path = null) {
+            return $path;
+        });
+
+        $app->shouldReceive('make')->andReturnUsing(function ($class) {
+            return new $class;
+        });
+
+        $config = $this->makeConfig();
+        $commitMessageStorage = $this->makeCommitMessageStorage();
+
+        $commitMessageStorage
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn('Test commit');
+
+        $commitMessageStorage
+            ->shouldNotReceive('update');
+
+        $command = new PrepareCommitMessage($config, $commitMessageStorage);
+
+        $input = m::mock(\Symfony\Component\Console\Input\InputInterface::class);
+        $input->shouldReceive('getArgument')
+            ->once()
+            ->with('file')
+            ->andReturn('tmp/COMMIT_MESSAGE');
+
+        $command->setLaravel($app);
+        $command->setInput($input);
+
+        $output = m::mock(OutputStyle::class);
+
+        $output->shouldReceive('writeln')
+            ->once()
+            ->with('<info>Hook: hook 3...</info>', 32);
+
+        $output->shouldNotReceive('writeln')
+            ->with('<info>Hook: hook 2...</info>', 32);
+
+        $command->setOutput($output);
+
+        $config->shouldReceive('get')
+            ->with('git_hooks.prepare-commit-msg')
+            ->once()
+            ->andReturn([
+                PrepareCommitMessageTestHook3::class,
+                PrepareCommitMessageTestHook2::class
+            ]);
 
         $process = m::mock(Process::class);
         $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');
@@ -98,6 +177,14 @@ class PrepareCommitMessageTestHook1 implements MessageHook
 
         return $next($message);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return 'hook 1';
+    }
 }
 
 class PrepareCommitMessageTestHook2 implements MessageHook
@@ -111,5 +198,38 @@ class PrepareCommitMessageTestHook2 implements MessageHook
         $message->setMessage($message->getMessage().' hook2');
 
         return $next($message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return 'hook 2';
+    }
+}
+
+
+class PrepareCommitMessageTestHook3 implements MessageHook
+{
+
+    /**
+     * @inheritDoc
+     */
+    public function handle(\Butschster\GitHooks\Git\CommitMessage $message, Closure $next)
+    {
+        $message->setMessage($message->getMessage().' hook2');
+
+        throw new Exception('Failed hook');
+
+        return $next($message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return 'hook 3';
     }
 }

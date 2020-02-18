@@ -2,15 +2,16 @@
 
 namespace Butschster\GitHooks\Console\Commands;
 
+use Butschster\GitHooks\Console\Commands\concerns\WithPipeline;
 use Butschster\GitHooks\Git\GetLasCommitFromLog;
 use Butschster\GitHooks\Git\Log;
-use Closure;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Pipeline\Pipeline;
 
 class PostCommit extends Command
 {
+    use WithPipeline;
+
     /**
      * The name and signature of the console command.
      * @var string
@@ -62,20 +63,9 @@ class PostCommit extends Command
     {
         $hooks = $this->getHooks();
 
-        (new Pipeline($this->getLaravel()))
+        $this->makePipeline($hooks)
             ->send($log)
-            ->through($hooks)
-            ->then($this->doNothing());
-    }
-
-    /**
-     * @return Closure
-     */
-    protected function doNothing()
-    {
-        return function () {
-
-        };
+            ->thenReturn();
     }
 
     /**

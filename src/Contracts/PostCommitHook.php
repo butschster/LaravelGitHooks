@@ -5,7 +5,7 @@ namespace Butschster\GitHooks\Contracts;
 use Butschster\GitHooks\Git\Log;
 use Closure;
 
-interface PostCommitHook
+interface PostCommitHook extends Hook
 {
     /**
      * @param Log $log

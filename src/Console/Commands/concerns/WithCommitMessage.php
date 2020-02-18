@@ -8,10 +8,11 @@ use Butschster\GitHooks\Contracts\CommitMessageStorage;
 use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Closure;
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Pipeline\Pipeline;
 
 trait WithCommitMessage
 {
+    use WithPipeline;
+
     /**
      * @var Repository
      */
@@ -66,9 +67,8 @@ trait WithCommitMessage
     {
         $hooks = $this->getHooks();
 
-        (new Pipeline($this->getLaravel()))
+        $this->makePipeline($hooks)
             ->send($message)
-            ->through($hooks)
             ->then($this->storeMessage());
     }
 

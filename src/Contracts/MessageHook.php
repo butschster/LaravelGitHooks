@@ -5,7 +5,7 @@ namespace Butschster\GitHooks\Contracts;
 use Butschster\GitHooks\Git\CommitMessage;
 use Closure;
 
-interface MessageHook
+interface MessageHook extends Hook
 {
     /**
      * @param CommitMessage $message
