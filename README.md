@@ -60,7 +60,13 @@ namespace \App\Console\GitHooks;
 use \Butschster\GitHooks\Git\ChangedFiles;
 use Closure;
 
-class MyPreCommitHook implements \Butschster\GitHooks\Contracts\PreCommitHook {
+class MyPreCommitHook implements \Butschster\GitHooks\Contracts\PreCommitHook
+{
+
+    public function getName() : string
+    {
+        return '...';
+    }
 
     public function handle(ChangedFiles $files, Closure $next)
     {
@@ -95,7 +101,12 @@ namespace \App\Console\GitHooks;
 use Butschster\GitHooks\Git\CommitMessage;
 use Closure;
 
-class MyFirstPrepareCommitHook implements \Butschster\GitHooks\Contracts\MessageHook {
+class MyFirstPrepareCommitHook implements \Butschster\GitHooks\Contracts\MessageHook
+{
+    public function getName() : string
+    {
+        return '...';
+    }
 
     public function handle(CommitMessage $message, Closure $next)
     {
@@ -135,7 +146,12 @@ namespace \App\Console\GitHooks;
 use Butschster\GitHooks\Git\CommitMessage;
 use Closure;
 
-class MyFirstCommitMessageHook implements \Butschster\GitHooks\Contracts\MessageHook {
+class MyFirstCommitMessageHook implements \Butschster\GitHooks\Contracts\MessageHook
+{
+    public function getName() : string
+    {
+        return '...';
+    }
 
     public function handle(CommitMessage $message, Closure $next)
     {
@@ -176,7 +192,12 @@ namespace \App\Console\GitHooks;
 use Butschster\GitHooks\Git\Log;
 use Closure;
 
-class NotifyAboutNewCommit implements \Butschster\GitHooks\Contracts\PostCommitHook {
+class NotifyAboutNewCommit implements \Butschster\GitHooks\Contracts\PostCommitHook
+{
+    public function getName() : string
+    {
+        return '...';
+    }
 
     public function handle(Log $log, Closure $next)
     {
