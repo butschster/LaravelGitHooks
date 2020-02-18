@@ -47,16 +47,19 @@ class PrepareCommitMessageTest extends TestCase
 
         $commitMessageStorage
             ->shouldReceive('get')
+            ->once()
             ->andReturn('Test commit');
 
         $commitMessageStorage
             ->shouldReceive('update')
+            ->once()
             ->with('tmp/COMMIT_MESSAGE', 'Test commit hook1 hook2');
 
         $command = new PrepareCommitMessage($config, $commitMessageStorage);
 
         $input = m::mock(\Symfony\Component\Console\Input\InputInterface::class);
         $input->shouldReceive('getArgument')
+            ->twice()
             ->with('file')
             ->andReturn('tmp/COMMIT_MESSAGE');
 

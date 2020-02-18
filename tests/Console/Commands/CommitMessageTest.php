@@ -47,10 +47,12 @@ class CommitMessageTest extends TestCase
 
         $commitMessageStorage
             ->shouldReceive('get')
+            ->once()
             ->andReturn('Test commit');
 
         $commitMessageStorage
             ->shouldReceive('update')
+            ->once()
             ->with('tmp/COMMIT_MESSAGE', 'Test commit hook1 hook2');
 
         $command = new CommitMessage($config, $commitMessageStorage);

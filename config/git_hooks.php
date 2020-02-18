@@ -7,6 +7,8 @@ return [
     // can bypass it with git commit --no-verify. You can do things like check for code style (run lint or something
     // equivalent), check for trailing whitespace (the default hook does exactly this), or check for appropriate
     // documentation on new methods.
+    //
+    // This hooks must implements \Butschster\GitHooks\Contracts\PreCommitHook
     'pre-commit' => [
 
     ],
@@ -18,15 +20,17 @@ return [
     // commits where the default message is auto-generated, such as templated commit messages, merge commits, squashed
     // commits, and amended commits. You may use it in conjunction with a commit template to programmatically insert
     // information.
+    //
+    // This hooks must implements \Butschster\GitHooks\Contracts\MessageHook
     'prepare-commit-msg' => [
 
     ],
 
     // The commit-msg hook takes one parameter, which again is the path to a temporary file that contains the commit
     // message written by the developer. If this script exits non-zero, Git aborts the commit process, so you can use
-    // it to validate your project state or commit message before allowing a commit to go through. In the last section
-    // of this chapter, we’ll demonstrate using this hook to check that your commit message is conformant to a required
-    // pattern.
+    // it to validate your project state or commit message before allowing a commit to go through.
+    //
+    // This hooks must implements \Butschster\GitHooks\Contracts\MessageHook
     'commit-msg' => [
 
     ],
