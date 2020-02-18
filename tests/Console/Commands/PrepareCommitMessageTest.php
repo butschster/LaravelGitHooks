@@ -9,6 +9,7 @@ use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
 use Exception;
+use Illuminate\Config\Repository;
 use Illuminate\Console\OutputStyle;
 use Mockery as m;
 use Symfony\Component\Process\Process;
@@ -46,7 +47,15 @@ class PrepareCommitMessageTest extends TestCase
             return new $class;
         });
 
-        $config = $this->makeConfig();
+        $config = new Repository([
+            'git_hooks' => [
+                'prepare-commit-msg' => [
+                    PrepareCommitMessageTestHook1::class,
+                    PrepareCommitMessageTestHook2::class
+                ]
+            ]
+        ]);
+
         $commitMessageStorage = $this->makeCommitMessageStorage();
 
         $commitMessageStorage
@@ -82,14 +91,6 @@ class PrepareCommitMessageTest extends TestCase
 
         $command->setOutput($output);
 
-        $config->shouldReceive('get')
-            ->with('git_hooks.prepare-commit-msg')
-            ->once()
-            ->andReturn([
-                PrepareCommitMessageTestHook1::class,
-                PrepareCommitMessageTestHook2::class
-        ]);
-
         $process = m::mock(Process::class);
         $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');
 
@@ -110,7 +111,15 @@ class PrepareCommitMessageTest extends TestCase
             return new $class;
         });
 
-        $config = $this->makeConfig();
+        $config = new Repository([
+            'git_hooks' => [
+                'prepare-commit-msg' => [
+                    PrepareCommitMessageTestHook3::class,
+                    PrepareCommitMessageTestHook2::class
+                ]
+            ]
+        ]);
+
         $commitMessageStorage = $this->makeCommitMessageStorage();
 
         $commitMessageStorage
@@ -150,14 +159,6 @@ class PrepareCommitMessageTest extends TestCase
             ->with('<error>Reason: Failed hook</error>', 32);
 
         $command->setOutput($output);
-
-        $config->shouldReceive('get')
-            ->with('git_hooks.prepare-commit-msg')
-            ->once()
-            ->andReturn([
-                PrepareCommitMessageTestHook3::class,
-                PrepareCommitMessageTestHook2::class
-            ]);
 
         $process = m::mock(Process::class);
         $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');

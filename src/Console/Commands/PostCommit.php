@@ -3,13 +3,14 @@
 namespace Butschster\GitHooks\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\concerns\WithPipeline;
+use Butschster\GitHooks\Contracts\HookCommand;
 use Butschster\GitHooks\Exceptions\HookFailException;
 use Butschster\GitHooks\Git\GetLasCommitFromLog;
 use Butschster\GitHooks\Git\Log;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Config\Repository;
 
-class PostCommit extends Command
+class PostCommit extends Command implements HookCommand
 {
     use WithPipeline;
 
@@ -41,6 +42,14 @@ class PostCommit extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getHook(): string
+    {
+        return 'post-commit';
+    }
+
+    /**
      * Execute the console command.
      *
      * @param GetLasCommitFromLog $command
@@ -66,18 +75,8 @@ class PostCommit extends Command
      */
     protected function sendLogCommitThroughHooks(Log $log): void
     {
-        $hooks = $this->getHooks();
-
-        $this->makePipeline($hooks)
+        $this->makePipeline()
             ->send($log)
             ->thenReturn();
-    }
-
-    /**
-     * @return array
-     */
-    protected function getHooks(): array
-    {
-        return (array) $this->config->get('git_hooks.post-commit');
     }
 }

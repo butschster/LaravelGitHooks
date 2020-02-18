@@ -5,7 +5,6 @@ It provides a simple and flexible API to manage git hooks, edit commit messages
 
 [![Build Status](https://travis-ci.org/butschster/LaravelGitHooks.svg?branch=master)](https://travis-ci.org/butschster/LaravelGitHooks) [![Latest Stable Version](https://poser.pugx.org/butschster/laravel-git-hooks/v/stable)](https://packagist.org/packages/butschster/laravel-git-hooks) [![Total Downloads](https://poser.pugx.org/butschster/laravel-git-hooks/downloads)](https://packagist.org/packages/butschster/laravel-git-hooks) [![License](https://poser.pugx.org/butschster/laravel-git-hooks/license)](https://packagist.org/packages/butschster/meta-tags)
 
-
 ## Features
 
 - Manage git hooks
@@ -39,7 +38,51 @@ Publish the config file.
 
 ## Hooks
 
-### pre-commit
+### Configuration
+
+You can set list oh hooks for each of type git hook. You can do it in `config/git_hooks.php`. 
+As a hook you can use class names, service containers and closure functions.
+
+```php
+// App/Providers/AppServiceProvider
+
+class AppServiceProvider extends ServiceProvider {
+    pubflic function register() {
+    
+        $this->app->bind('my-first-hook', function ($app) {
+            return new \App\Console\GitHooks\MyPreCommitHook();
+        });
+
+    }
+}
+
+// config/git_hooks.php
+return [
+    ...
+    'pre-commit' => [
+        // Just class name
+        \App\Console\GitHooks\MyPreCommitHook::class,
+        
+        // Class name with params, which will be pass in constructor
+        \App\Console\GitHooks\MyPreCommitHook::class => [
+            'param1' => 'hello',
+            'param2' => 'world'
+        ], 
+        
+        // Closure function
+        function(ChangedFiles $files, Closure $next) {
+            return $next($files);
+        },
+        
+        // Service container
+        'my-first-hook'
+    ],
+    ...
+];
+
+```
+
+### Hook pre-commit
 
 The `pre-commit` hook is run first, before you even type in a commit message. It’s used to inspect the snapshot that’s about to be committed, to see if you’ve forgotten something, to make sure tests run, or to examine whatever you need to inspect in the code. Exiting non-zero from this hook aborts the commit, although you can bypass it with `git commit --no-verify`. You can do things like check for code style (run lint or something equivalent), check for trailing whitespace (the default hook does exactly this), or check for appropriate documentation on new methods.
 
@@ -80,7 +123,7 @@ class MyPreCommitHook implements \Butschster\GitHooks\Contracts\PreCommitHook
 }
 ```
 
-### prepare-commit-msg
+### Hook prepare-commit-msg
 
 The `prepare-commit-msg` hook is run before the commit message editor is fired up but after the default message is created. It lets you edit the default message before the commit author sees it. This hook takes a few parameters: the path to the file that holds the commit message so far, the type of commit, and the commit SHA-1 if this is an amended commit. This hook generally isn’t useful for normal commits; rather, it’s good for commits where the default message is auto-generated, such as templated commit messages, merge commits, squashed commits, and amended commits. You may use it in conjunction with a commit template to programmatically insert information.
 
@@ -125,7 +168,7 @@ class MyFirstPrepareCommitHook implements \Butschster\GitHooks\Contracts\Message
 }
 ```
 
-### commit-msg
+### Hook commit-msg
 
 The `commit-msg` hook takes one parameter, which again is the path to a temporary file that contains the commit message written by the developer. If this script exits non-zero, Git aborts the commit process, so you can use it to validate your project state or commit message before allowing a commit to go through.
 
@@ -170,7 +213,7 @@ class MyFirstCommitMessageHook implements \Butschster\GitHooks\Contracts\Message
 }
 ```
 
-### post-commit
+### Hook post-commit
 
 After the entire commit process is completed, the post-commit hook runs. It doesn’t take any parameters, but you can easily get the last commit by running git log -1 HEAD. Generally, this script is used for notification or something similar.
 

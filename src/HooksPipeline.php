@@ -6,6 +6,8 @@ use Butschster\GitHooks\Contracts\Hook;
 use Butschster\GitHooks\Exceptions\HookFailException;
 use Closure;
 use Exception;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Pipeline\Pipeline;
 use Throwable;
 
@@ -20,6 +22,28 @@ class HooksPipeline extends Pipeline
      * @var Closure
      */
     protected $errorCallback;
+
+    /**
+     * @var Repository
+     */
+    protected $config;
+
+    /**
+     * @var string
+     */
+    protected $hook;
+
+    /**
+     * @param \Illuminate\Contracts\Container\Container|null $container
+     * @param Repository $config
+     * @param string $hook
+     */
+    public function __construct(Container $container, Repository $config, string $hook)
+    {
+        $this->container = $container;
+        $this->config = $config;
+        $this->hook = $hook;
+    }
 
     /**
      * @param Closure $callback
@@ -61,18 +85,18 @@ class HooksPipeline extends Pipeline
                         // the appropriate method and arguments, returning the results back out.
                         return $pipe($passable, $stack);
                     } elseif (! is_object($pipe)) {
-                        [$name, $parameters] = $this->parsePipeString($pipe);
+                        $config = (array) $this->config->get('git_hooks.'.$this->hook.'.'.$pipe);
 
                         // If the pipe is a string we will parse the string and resolve the class out
                         // of the dependency injection container. We can then build a callable and
                         // execute the pipe function giving in the parameters that are required.
-                        $pipe = $this->getContainer()->make($name);
+                        $pipe = $this->getContainer()->make($pipe, [$config]);
 
                         if ($this->callback) {
                             call_user_func_array($this->callback, [$pipe]);
                         }
 
-                        $parameters = array_merge([$passable, $stack], $parameters);
+                        $parameters = [$passable, $stack];
                     } else {
                         // If the pipe is already an object we'll just make a callable and pass it to
                         // the pipe as-is. There is no need to do any extra parsing and formatting

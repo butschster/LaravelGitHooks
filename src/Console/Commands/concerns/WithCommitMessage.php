@@ -70,9 +70,7 @@ trait WithCommitMessage
      */
     protected function sendMessageThroughHooks(CommitMessage $message): void
     {
-        $hooks = $this->getHooks();
-
-        $this->makePipeline($hooks)
+        $this->makePipeline()
             ->send($message)
             ->then($this->storeMessage());
     }
@@ -82,7 +80,7 @@ trait WithCommitMessage
      *
      * @return Closure
      */
-    protected function storeMessage()
+    protected function storeMessage(): Closure
     {
         return function (CommitMessage $message) {
             $this->messageStorage->update(
@@ -90,13 +88,5 @@ trait WithCommitMessage
                 (string) $message
             );
         };
-    }
-
-    /**
-     * @return array
-     */
-    protected function getHooks(): array
-    {
-        return (array) $this->config->get('git_hooks.' . $this->hook);
     }
 }

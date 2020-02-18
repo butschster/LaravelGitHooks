@@ -8,6 +8,7 @@ use Butschster\GitHooks\Git\GetLasCommitFromLog;
 use Butschster\GitHooks\Git\Log;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
+use Illuminate\Config\Repository;
 use Mockery as m;
 use Symfony\Component\Process\Process;
 
@@ -23,10 +24,6 @@ class PostCommitTest extends TestCase
 
     function test_a_message_should_be_send_through_the_hook_pipes()
     {
-        $config = $this->makeConfig();
-
-        $command = new PostCommit($config);
-
         $hook1 = m::mock(PostCommitHook::class);
         $hook1->shouldReceive('handle')
             ->once()
@@ -47,13 +44,18 @@ class PostCommitTest extends TestCase
                 return $closure($log);
             });
 
-        $config->shouldReceive('get')
-            ->with('git_hooks.post-commit')
-            ->once()
-            ->andReturn([
-                $hook1,
-                $hook2
-            ]);
+        $config = new Repository([
+            'git_hooks' => [
+                'post-commit' => [
+                    $hook1,
+                    $hook2
+                ]
+            ]
+        ]);
+
+        $app = $this->makeApplication();
+        $command = new PostCommit($config);
+        $command->setLaravel($app);
 
         $gitCommand = m::mock(GetLasCommitFromLog::class);
         $process = m::mock(Process::class);
@@ -71,7 +73,7 @@ Date:   Tue Feb 18 12:01:15 2020 +0300
 
     fixed #2
 EOL
-);
+            );
         $gitCommand->shouldReceive('exec')->once()->andReturn($process);
 
         $command->handle($gitCommand);

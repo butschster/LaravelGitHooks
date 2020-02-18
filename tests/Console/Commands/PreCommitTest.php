@@ -8,6 +8,7 @@ use Butschster\GitHooks\Git\ChangedFiles;
 use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
+use Illuminate\Config\Repository;
 use Mockery as m;
 use Symfony\Component\Process\Process;
 
@@ -23,9 +24,6 @@ class PreCommitTest extends TestCase
 
     function test_a_message_should_be_send_through_the_hook_pipes()
     {
-        $config = $this->makeConfig();
-
-        $command = new PreCommit($config);
 
         $hook1 = m::mock(PreCommitHook::class);
         $hook1->shouldReceive('handle')
@@ -43,13 +41,18 @@ class PreCommitTest extends TestCase
                 return $closure($files);
             });
 
-        $config->shouldReceive('get')
-            ->with('git_hooks.pre-commit')
-            ->once()
-            ->andReturn([
-                $hook1,
-                $hook2
-            ]);
+        $config = new Repository([
+            'git_hooks' => [
+                'pre-commit' => [
+                    $hook1,
+                    $hook2
+                ]
+            ]
+        ]);
+
+        $app = $this->makeApplication();
+        $command = new PreCommit($config);
+        $command->setLaravel($app);
 
         $process = m::mock(Process::class);
         $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');

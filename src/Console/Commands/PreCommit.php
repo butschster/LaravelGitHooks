@@ -3,13 +3,14 @@
 namespace Butschster\GitHooks\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\concerns\WithPipeline;
+use Butschster\GitHooks\Contracts\HookCommand;
 use Butschster\GitHooks\Exceptions\HookFailException;
 use Butschster\GitHooks\Git\ChangedFiles;
 use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Config\Repository;
 
-class PreCommit extends Command
+class PreCommit extends Command implements HookCommand
 {
     use WithPipeline;
 
@@ -41,6 +42,14 @@ class PreCommit extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getHook(): string
+    {
+        return 'pre-commit';
+    }
+
+    /**
      * Execute the console command.
      *
      * @param GetListOfChangedFiles $command
@@ -66,18 +75,8 @@ class PreCommit extends Command
      */
     protected function sendChangedFilesThroughHooks(ChangedFiles $files): void
     {
-        $hooks = $this->getHooks();
-
-        $this->makePipeline($hooks)
+        $this->makePipeline()
             ->send($files)
             ->thenReturn();
-    }
-
-    /**
-     * @return array
-     */
-    protected function getHooks(): array
-    {
-        return (array) $this->config->get('git_hooks.pre-commit');
     }
 }

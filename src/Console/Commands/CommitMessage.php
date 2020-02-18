@@ -4,10 +4,11 @@ namespace Butschster\GitHooks\Console\Commands;
 
 use Butschster\GitHooks\Console\Commands\concerns\WithCommitMessage;
 use Butschster\GitHooks\Contracts\CommitMessageStorage;
+use Butschster\GitHooks\Contracts\HookCommand;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Console\Command;
 
-class CommitMessage extends Command
+class CommitMessage extends Command implements HookCommand
 {
     use WithCommitMessage;
 
@@ -23,11 +24,6 @@ class CommitMessage extends Command
     protected $description = 'Run hook commit-msg';
 
     /**
-     * @var string
-     */
-    protected $hook = 'commit-msg';
-
-    /**
      * @param Repository $config
      * @param CommitMessageStorage $messageStorage
      */
@@ -37,5 +33,13 @@ class CommitMessage extends Command
 
         $this->config = $config;
         $this->messageStorage = $messageStorage;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHook(): string
+    {
+        return 'commit-msg';
     }
 }
