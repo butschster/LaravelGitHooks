@@ -3,16 +3,24 @@
 namespace Butschster\GitHooks\Git;
 
 use Butschster\GitHooks\Contracts\GitCommand;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class GetLasCommitFromLog implements GitCommand
 {
     /**
-     * @inheritDoc
+     * @return Process
      */
-    public function exec(): array
+    public function exec(): Process
     {
-        exec('git log -1 HEAD', $output, $status);
+        $process = new Process(['git', 'log', '-1', 'HEAD']);
+        $process->run();
 
-        return $output;
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $process;
     }
 }

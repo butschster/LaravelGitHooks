@@ -9,6 +9,7 @@ use Butschster\GitHooks\Git\Log;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
 use Mockery as m;
+use Symfony\Component\Process\Process;
 
 class PostCommitTest extends TestCase
 {
@@ -55,17 +56,23 @@ class PostCommitTest extends TestCase
             ]);
 
         $gitCommand = m::mock(GetLasCommitFromLog::class);
-        $gitCommand->shouldReceive('exec')->once()->andReturn([
-            'commit bfdc6c406626223bf3cbb65b8d269f7b65ca0570',
-            'Author: Pavel Buchnev <butschster@gmail.com>',
-            'Date:   Tue Feb 18 12:01:15 2020 +0300',
-            '',
-            '    Added PreCommit hooks.',
-            '',
-            '    Added docs for `pre-commit`, `prepare-commit-msg`, `commit-msg`',
-            '',
-            '    fixed #2',
-        ]);
+        $process = m::mock(Process::class);
+
+        $process->shouldReceive('getOutput')
+            ->once()
+            ->andReturn(<<<EOL
+commit bfdc6c406626223bf3cbb65b8d269f7b65ca0570
+Author: Pavel Buchnev <butschster@gmail.com>
+Date:   Tue Feb 18 12:01:15 2020 +0300
+
+    Added PreCommit hooks.
+
+    Added docs for `pre-commit`, `prepare-commit-msg`, `commit-msg`
+
+    fixed #2
+EOL
+);
+        $gitCommand->shouldReceive('exec')->once()->andReturn($process);
 
         $command->handle($gitCommand);
 

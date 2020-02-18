@@ -46,10 +46,10 @@ class PostCommit extends Command
      */
     public function handle(GetLasCommitFromLog $command)
     {
-        $log = $command->exec();
-
         $this->sendLogCommitThroughHooks(
-            new Log($log)
+            new Log(
+                $command->exec()->getOutput()
+            )
         );
     }
 

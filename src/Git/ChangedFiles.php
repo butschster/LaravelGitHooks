@@ -12,11 +12,14 @@ class ChangedFiles
     protected $files;
 
     /**
-     * @param array $gitStatus
+     * @param string $log
      */
-    public function __construct(array $gitStatus)
+    public function __construct(string $log)
     {
-        $this->files = collect($gitStatus)
+        $files = (array) preg_split("/\r\n|\n|\r/", $log);
+
+        $this->files = collect($files)
+            ->filter()
             ->map(function (string $line) {
                 return new ChangedFile($line);
             });

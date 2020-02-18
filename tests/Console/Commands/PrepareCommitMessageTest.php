@@ -8,6 +8,7 @@ use Butschster\GitHooks\Git\GetListOfChangedFiles;
 use Butschster\GitHooks\Tests\TestCase;
 use Closure;
 use Mockery as m;
+use Symfony\Component\Process\Process;
 
 class PrepareCommitMessageTest extends TestCase
 {
@@ -74,10 +75,11 @@ class PrepareCommitMessageTest extends TestCase
                 PrepareCommitMessageTestHook2::class
         ]);
 
+        $process = m::mock(Process::class);
+        $process->shouldReceive('getOutput')->once()->andReturn('AM src/ChangedFiles.php');
+
         $gitCommand = m::mock(GetListOfChangedFiles::class);
-        $gitCommand->shouldReceive('exec')->once()->andReturn([
-            'AM src/ChangedFiles.php'
-        ]);
+        $gitCommand->shouldReceive('exec')->once()->andReturn($process);
 
         $command->handle($gitCommand);
 

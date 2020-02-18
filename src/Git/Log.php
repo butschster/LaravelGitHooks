@@ -7,9 +7,9 @@ use Carbon\Carbon;
 class Log
 {
     /**
-     * @var array
+     * @var string
      */
-    protected $lines;
+    protected $log;
 
     /**
      * @var false|string
@@ -37,11 +37,14 @@ class Log
     private $message = '';
 
     /**
-     * @param array $lines
+     * Log constructor.
+     *
+     * @param string $log
      */
-    public function __construct(array $lines)
+    public function __construct(string $log)
     {
-        $this->lines = $lines;
+        $this->log = $log;
+        $lines = preg_split("/\r\n|\n|\r/", $log);
 
         $this->parse($lines);
     }
@@ -125,5 +128,13 @@ class Log
     public function __toString()
     {
         return $this->getHash();
+    }
+
+    /**
+     * @return string
+     */
+    public function getLog(): string
+    {
+        return $this->log;
     }
 }

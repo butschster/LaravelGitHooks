@@ -2,12 +2,14 @@
 
 namespace Butschster\GitHooks\Contracts;
 
+use Symfony\Component\Process\Process;
+
 interface GitCommand
 {
     /**
      * Execute command and return output
      *
-     * @return array
+     * @return Process
      */
-    public function exec(): array;
+    public function exec(): Process;
 }

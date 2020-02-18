@@ -46,10 +46,10 @@ class PreCommit extends Command
      */
     public function handle(GetListOfChangedFiles $command)
     {
-        $changedFiles = $command->exec();
-
         $this->sendChangedFilesThroughHooks(
-            new ChangedFiles($changedFiles)
+            new ChangedFiles(
+                $command->exec()->getOutput()
+            )
         );
     }
 

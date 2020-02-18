@@ -36,12 +36,12 @@ trait WithCommitMessage
             $this->getLaravel()->basePath($file)
         );
 
-        $changedFiles = $command->exec();
-
         $this->sendMessageThroughHooks(
             new CommitMessage(
                 $message,
-                new ChangedFiles($changedFiles)
+                new ChangedFiles(
+                    $command->exec()->getOutput()
+                )
             )
         );
     }

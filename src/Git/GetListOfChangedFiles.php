@@ -3,16 +3,24 @@
 namespace Butschster\GitHooks\Git;
 
 use Butschster\GitHooks\Contracts\GitCommand;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class GetListOfChangedFiles implements GitCommand
 {
     /**
      * @inheritDoc
      */
-    public function exec(): array
+    public function exec(): Process
     {
-        exec('git status --short', $output, $status);
+        $process = new Process(['git', 'status', '--short']);
+        $process->run();
 
-        return (array) $output;
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $process;
     }
 }
