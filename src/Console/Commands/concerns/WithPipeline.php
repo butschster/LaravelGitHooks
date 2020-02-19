@@ -21,6 +21,8 @@ trait WithPipeline
     }
 
     /**
+     * Make pipeline instance
+     *
      * @return Pipeline
      */
     protected function makePipeline(): Pipeline
@@ -33,22 +35,18 @@ trait WithPipeline
 
         return $pipeline
             ->through($this->getRegisteredHooks())
-            ->withCallback($this->showInfoAboutHook())
-            ->withErrorCallback($this->showInfoAboutHookException());
+            ->withCallback($this->showInfoAboutHook());
     }
 
+    /**
+     * Show information about run hook
+     *
+     * @return Closure
+     */
     protected function showInfoAboutHook(): Closure
     {
         return function (Hook $hook) {
             $this->info(sprintf('Hook: %s...', $hook->getName()));
-        };
-    }
-
-    protected function showInfoAboutHookException(): Closure
-    {
-        return function (Hook $hook, Exception $e) {
-            $this->error(sprintf('Failed hook: %s', $hook->getName()));
-            $this->error(sprintf('Reason: %s', $e->getMessage()));
         };
     }
 

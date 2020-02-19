@@ -36,6 +36,7 @@ class GitHooksServiceProvider extends ServiceProvider
                     //'post-checkout',
                     //'post-merge',
                     //'pre-push'
+
                 ];
 
                 $storage = $app[Contracts\HookStorage::class];
