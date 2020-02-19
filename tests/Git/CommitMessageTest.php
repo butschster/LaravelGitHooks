@@ -5,7 +5,6 @@ namespace Butschster\GitHooks\Tests\Git;
 use Butschster\GitHooks\Git\ChangedFiles;
 use Butschster\GitHooks\Git\CommitMessage;
 use Butschster\GitHooks\Tests\TestCase;
-use Illuminate\Support\Collection;
 
 class CommitMessageTest extends TestCase
 {
