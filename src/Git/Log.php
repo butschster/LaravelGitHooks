@@ -58,7 +58,8 @@ class Log
     {
         foreach ($lines as $key => $line) {
             if (strpos($line, 'commit') === 0) {
-                $this->hash = substr($line, strlen('commit') + 1);
+                preg_match('/(?<hash>[a-z0-9]{40})/', $line, $matches);
+                $this->hash = $matches['hash'] ?? null;
             } else if (strpos($line, 'Author') === 0) {
                 $this->author = substr($line, strlen('Author:') + 1);
             } else if (strpos($line, 'Date') === 0) {

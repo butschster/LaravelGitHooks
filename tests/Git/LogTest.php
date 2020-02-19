@@ -10,7 +10,7 @@ class LogTest extends TestCase
     function test_parse_log_from_console()
     {
         $log = new Log(<<<EOL
-commit bfdc6c406626223bf3cbb65b8d269f7b65ca0570
+commit bfdc6c406626223bf3cbb65b8d269f7b65ca0570 (HEAD -> feature/1, origin/feature/1)
 Author: Pavel Buchnev <butschster@gmail.com>
 Date:   Tue Feb 18 12:01:15 2020 +0300
 
