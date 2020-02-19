@@ -51,6 +51,7 @@ class GitHooksServiceProvider extends ServiceProvider
                 Commands\CommitMessage::class,
                 Commands\PreCommit::class,
                 Commands\PrepareCommitMessage::class,
+                Commands\PostCommit::class,
             ]);
         }
     }
