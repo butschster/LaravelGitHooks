@@ -31,11 +31,11 @@ class GitHooksServiceProvider extends ServiceProvider
                     'prepare-commit-msg',
                     'commit-msg',
                     'post-commit',
+                    'pre-push',
                     //'pre-rebase',
                     //'post-rewrite',
                     //'post-checkout',
-                    //'post-merge',
-                    //'pre-push'
+                    //'post-merge'
 
                 ];
 
@@ -53,6 +53,7 @@ class GitHooksServiceProvider extends ServiceProvider
                 Commands\PreCommit::class,
                 Commands\PrepareCommitMessage::class,
                 Commands\PostCommit::class,
+                Commands\PrePush::class,
             ]);
         }
     }
