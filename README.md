@@ -1,5 +1,7 @@
 # Git hooks manager for Laravel application
 
+![321-3210662_git-hooks-git](https://user-images.githubusercontent.com/773481/74965961-3f427880-5427-11ea-92b3-1a74c7e15db1.png)
+
 Laravel Git Hooks manager is a beautiful tools for Laravel applications. 
 It provides a simple and flexible API to manage git hooks, edit commit messages
 
