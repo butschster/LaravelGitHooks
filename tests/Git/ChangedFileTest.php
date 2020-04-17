@@ -41,12 +41,20 @@ class ChangedFileTest extends TestCase
     {
         return [
             [
+                '',
+                false,
+                false,
+                false,
+                false,
+                false,
+            ],
+            [
                 'AM src/ChangedFiles.php',
                 true,
                 true,
                 false,
                 false,
-                true
+                true,
             ],
             [
                 ' M src/Console/Commands/CommitMessage.php',
@@ -62,7 +70,7 @@ class ChangedFileTest extends TestCase
                 false,
                 true,
                 false,
-                false
+                false,
             ],
             [
                 '?? LICENSE',
@@ -71,7 +79,7 @@ class ChangedFileTest extends TestCase
                 false,
                 true,
                 false,
-            ]
+            ],
         ];
     }
 }

@@ -12,6 +12,8 @@ class ChangedFile
     const U = 32; // updated but unmerged
     const N = 64; // untracked
 
+    const PATTERN = '/^\s?(?<X>[A|M|D|R|C|U|\?]{1,2}| )(?<Y>[A|M|D|R|C|U|\?]{1,2}| )\s(?<file>\S+)(\s->\S+)?$/';
+
     /**
      * @var string
      */
@@ -52,15 +54,16 @@ class ChangedFile
     {
         $this->line = $line;
 
-        preg_match(
-            '/^\s?(?<X>[A|M|D|R|C|U|\?]{1,2}| )(?<Y>[A|M|D|R|C|U|\?]{1,2}| )\s(?<file>\S+)(\s->\S+)?$/',
-            $line,
-            $matches
-        );
+        preg_match(static::PATTERN, $line, $matches);
 
-        $this->X = $this->bitMap[$matches['X']] ?? 0;
-        $this->Y = $this->bitMap[$matches['Y']] ?? 0;
+        if (isset($matches['X'])) {
+            $this->X = $this->bitMap[$matches['X']] ?? 0;
+        }
 
+        if (isset($matches['Y'])) {
+            $this->Y = $this->bitMap[$matches['Y']] ?? 0;
+        }
+        
         $this->file = $matches['file'] ?? '';
     }
 
