@@ -63,7 +63,7 @@ class ChangedFile
         if (isset($matches['Y'])) {
             $this->Y = $this->bitMap[$matches['Y']] ?? 0;
         }
-        
+
         $this->file = $matches['file'] ?? '';
     }
 
