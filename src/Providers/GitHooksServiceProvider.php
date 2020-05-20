@@ -27,17 +27,15 @@ class GitHooksServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->app->singleton(Contracts\Configurator::class, function ($app) {
                 $hooks = [
-                    'pre-commit',
-                    'prepare-commit-msg',
-                    'commit-msg',
-                    'post-commit',
-                    'pre-push',
-                    //'pre-rebase',
-                    //'post-rewrite',
-                    //'post-checkout',
-                    //'post-merge'
-
+                    'pre-commit', 'prepare-commit-msg', 'commit-msg', 'post-commit',
+                    'pre-push', 'pre-rebase', 'post-rewrite', 'post-checkout', 'post-merge'
                 ];
+
+                $config = $app['config']->get('git_hooks');
+
+                $hooks = array_filter($hooks, function ($hook) use($config) {
+                    return !empty($config[$hook]);
+                });
 
                 $storage = $app[Contracts\HookStorage::class];
 
